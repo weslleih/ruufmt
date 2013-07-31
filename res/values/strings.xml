@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RU UFMT</string>
+    <string name="salada">Salada</string>
+    <string name="pp">Prato proteico</string>
+    <string name="guarnicao">Guarnição</string>
+    <string name="acompanhamento">Acompanhamento</string>
+    <string name="sobremesa">Sobremesa</string>
+    <string name="action_update">Atualizar</string>
+
+</resources>

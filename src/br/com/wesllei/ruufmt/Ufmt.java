@@ -1,4 +1,4 @@
-package br.wesllei.com.ruufmt;
+package br.com.wesllei.ruufmt;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;

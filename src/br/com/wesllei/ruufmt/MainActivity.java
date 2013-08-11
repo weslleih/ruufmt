@@ -1,6 +1,10 @@
-package br.wesllei.com.ruufmt;
+package br.com.wesllei.ruufmt;
 
 import java.util.ArrayList;
+
+import com.google.analytics.tracking.android.EasyTracker;
+
+import br.com.wesllei.ruufmt.R;
 
 import android.os.Bundle;
 
@@ -32,6 +36,18 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance().activityStart(this); // Add this method.
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance().activityStop(this); // Add this method.
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
@@ -46,36 +62,38 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	protected void alertError(){
+	protected void alertError() {
 		// 1. Instantiate an AlertDialog.Builder with its constructor
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-		// 2. Chain together various setter methods to set the dialog characteristics
-		builder.setMessage("Não foi possível baixar o cardápio. Culpa da sua 3g ou do site da UFMT.")
-		       .setTitle("Erro!");
-		
-		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	        	setContentView(R.layout.activity_main);
+		// 2. Chain together various setter methods to set the dialog
+		// characteristics
+		builder.setMessage(
+				"Não foi possível baixar o cardápio. Culpa da sua 3g ou do site da UFMT.")
+				.setTitle("Erro!");
 
-	       		TabHost tabs = (TabHost) findViewById(R.id.tabhost);
-	       		tabs.setup();
-	       		TabHost.TabSpec spec = tabs.newTabSpec("tag1");
-	       		spec.setContent(R.id.almoco);
-	       		spec.setIndicator("Almoço");
-	       		tabs.addTab(spec);
-	       		spec = tabs.newTabSpec("tag2");
-	       		spec.setContent(R.id.janta);
-	       		spec.setIndicator("Janta");
-	       		tabs.addTab(spec);
-	       		tabs.setCurrentTab(0);
-	           }
-	       });
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				setContentView(R.layout.activity_main);
+
+				TabHost tabs = (TabHost) findViewById(R.id.tabhost);
+				tabs.setup();
+				TabHost.TabSpec spec = tabs.newTabSpec("tag1");
+				spec.setContent(R.id.almoco);
+				spec.setIndicator("Almoço");
+				tabs.addTab(spec);
+				spec = tabs.newTabSpec("tag2");
+				spec.setContent(R.id.janta);
+				spec.setIndicator("Janta");
+				tabs.addTab(spec);
+				tabs.setCurrentTab(0);
+			}
+		});
 
 		// 3. Get the AlertDialog from create()
 		AlertDialog dialog = builder.create();
-		
-		dialog.show();		
+
+		dialog.show();
 	}
 
 	protected void setCardapio() {

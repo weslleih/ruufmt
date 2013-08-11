@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".MainActivity" >
@@ -183,6 +184,15 @@
                                 android:scrollHorizontally="false"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
                         </LinearLayout>
+                        <com.google.ads.AdView android:id="@+id/adView1"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:paddingTop="5dp"
+                         android:layout_gravity="center_horizontal"
+                         ads:adUnitId="a152078f05557b0"
+                         ads:adSize="BANNER"
+                         ads:testDevices="TEST_EMULATOR, 0149BD310E016012"
+                         ads:loadAdOnCreate="true"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -335,6 +345,15 @@
                                 android:scrollHorizontally="false"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
                         </LinearLayout>
+                        <com.google.ads.AdView android:id="@+id/adView2"
+                         android:layout_width="wrap_content"
+                         android:paddingTop="5dp"
+                         android:layout_height="wrap_content"
+                         android:layout_gravity="center_horizontal"
+                         ads:adUnitId="a152078f05557b0"
+                         ads:adSize="BANNER"
+                         ads:testDevices="TEST_EMULATOR, 0149BD310E016012"
+                         ads:loadAdOnCreate="true"/>
                     </LinearLayout>
                 </FrameLayout>
             </ScrollView>

@@ -65,9 +65,11 @@ public class Ufmt extends AsyncTask<Void, Void, Boolean>{
 		
 	}
 
-	public ArrayList<String> getAmoco() {
+	public ArrayList<Prato> getAmoco() {
 		Element secao = doc.getElementById("secao");
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<Prato> list = new ArrayList<Prato>();
+		String pratoString, tipo;
+		Prato prato;
 		
 		Elements tables = secao.getElementsByTag("table");
 		
@@ -76,16 +78,21 @@ public class Ufmt extends AsyncTask<Void, Void, Boolean>{
 		Elements trs = table.getElementsByTag("tr");
 		for (Element tr : trs) {
 			Elements tds = tr.getElementsByTag("td");
-			for (Element td : tds) {
-				list.add(td.text().trim().toLowerCase().replaceAll("\u00a0", "").trim().replaceAll("/", ", "));
+			if(tds.size() == 2){
+				tipo = tds.get(0).text().trim().toLowerCase().replaceAll("\u00a0", "").trim().replaceAll("/", ", ");
+				pratoString = tds.get(1).text().trim().toLowerCase().replaceAll("\u00a0", "").trim().replaceAll("/", ", ");
+				prato = new Prato(tipo,pratoString);
+				list.add(prato);
 			}
 		}
 		return list;
 	}
 
-	public ArrayList<String> getJanta() {
+	public ArrayList<Prato> getJanta() {
 		Element secao = doc.getElementById("secao");
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<Prato> list = new ArrayList<Prato>();
+		String pratoString, tipo;
+		Prato prato;
 		
 		Elements tables = secao.getElementsByTag("table");
 		
@@ -94,8 +101,11 @@ public class Ufmt extends AsyncTask<Void, Void, Boolean>{
 		Elements trs = table.getElementsByTag("tr");
 		for (Element tr : trs) {
 			Elements tds = tr.getElementsByTag("td");
-			for (Element td : tds) {
-				list.add(td.text().trim().toLowerCase().replaceAll("\u00a0", "").trim().replaceAll("/", ", "));
+			if(tds.size() == 2){
+				tipo = tds.get(0).text().trim().toLowerCase().replaceAll("\u00a0", "").trim().replaceAll("/", ", ");
+				pratoString = tds.get(1).text().trim().toLowerCase().replaceAll("\u00a0", "").trim().replaceAll("/", ", ");
+				prato = new Prato(tipo,pratoString);
+				list.add(prato);
 			}
 		}
 		return list;

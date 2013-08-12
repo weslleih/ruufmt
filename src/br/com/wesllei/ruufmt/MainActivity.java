@@ -1,7 +1,8 @@
 package br.com.wesllei.ruufmt;
 
-import java.util.ArrayList;
-
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import br.com.wesllei.ruufmt.R;
@@ -14,16 +15,21 @@ import android.content.DialogInterface;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	private Ufmt ufmt;
+	private ListView listViewAlmoco;
+	private ListView listViewJanta;
+	private AdView adView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_progess);
+		this.adView = new AdView(this, AdSize.BANNER, "a152078f05557b0");
 		ufmt = new Ufmt(this);
 		ufmt.execute();
 	}
@@ -63,11 +69,7 @@ public class MainActivity extends Activity {
 	}
 
 	protected void alertError() {
-		// 1. Instantiate an AlertDialog.Builder with its constructor
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-		// 2. Chain together various setter methods to set the dialog
-		// characteristics
 		builder.setMessage(
 				"Não foi possível baixar o cardápio. Culpa da sua 3g ou do site da UFMT.")
 				.setTitle("Erro!");
@@ -75,18 +77,7 @@ public class MainActivity extends Activity {
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				setContentView(R.layout.activity_main);
-
-				TabHost tabs = (TabHost) findViewById(R.id.tabhost);
-				tabs.setup();
-				TabHost.TabSpec spec = tabs.newTabSpec("tag1");
-				spec.setContent(R.id.almoco);
-				spec.setIndicator("Almoço");
-				tabs.addTab(spec);
-				spec = tabs.newTabSpec("tag2");
-				spec.setContent(R.id.janta);
-				spec.setIndicator("Janta");
-				tabs.addTab(spec);
-				tabs.setCurrentTab(0);
+				fixTab();
 			}
 		});
 
@@ -99,6 +90,43 @@ public class MainActivity extends Activity {
 	protected void setCardapio() {
 		setContentView(R.layout.activity_main);
 
+		fixTab();
+
+		String title = ufmt.getData();
+		if (title != null) {
+			setTitle(title);
+		}
+
+		listViewAlmoco = (ListView) findViewById(R.id.listAlmoco);
+		CardapioListAdapter almocoAdapter = new CardapioListAdapter(this,
+				ufmt.getAmoco());
+
+		listViewAlmoco.addFooterView((View) adView);
+		listViewAlmoco.setAdapter(almocoAdapter);
+
+		listViewJanta = (ListView) findViewById(R.id.listJanta);
+		CardapioListAdapter jantaAdapter = new CardapioListAdapter(this,
+				ufmt.getJanta());
+
+		listViewJanta.addFooterView((View) adView);
+		listViewJanta.setAdapter(jantaAdapter);
+
+		AdRequest request = new AdRequest();
+		request.addTestDevice(AdRequest.TEST_EMULATOR);
+		request.addTestDevice("0149BD310E016012");
+
+		adView.loadAd(request);
+	}
+
+	@Override
+	public void onDestroy() {
+		if (adView != null) {
+			adView.destroy();
+		}
+		super.onDestroy();
+	}
+
+	private void fixTab() {
 		TabHost tabs = (TabHost) findViewById(R.id.tabhost);
 		tabs.setup();
 		TabHost.TabSpec spec = tabs.newTabSpec("tag1");
@@ -110,60 +138,5 @@ public class MainActivity extends Activity {
 		spec.setIndicator("Janta");
 		tabs.addTab(spec);
 		tabs.setCurrentTab(0);
-
-		String title = ufmt.getData();
-		if (title != null) {
-			setTitle(title);
-		}
-
-		ArrayList<String> almoco = ufmt.getAmoco();
-		for (int i = 0; i < almoco.size() - 1; i++) {
-			String node = almoco.get(i);
-			if (node.equalsIgnoreCase("salada")) {
-				TextView salada = (TextView) findViewById(R.id.almocoSalada);
-				salada.setText(almoco.get(i + 1));
-			}
-			if (node.equalsIgnoreCase("prato proteico")) {
-				TextView salada = (TextView) findViewById(R.id.almocoPp);
-				salada.setText(almoco.get(i + 1));
-			}
-			if (node.equalsIgnoreCase("guarnição")) {
-				TextView salada = (TextView) findViewById(R.id.almocoGuarnicao);
-				salada.setText(almoco.get(i + 1));
-			}
-			if (node.equalsIgnoreCase("acompanhamento")) {
-				TextView salada = (TextView) findViewById(R.id.almocoAcompanhamento);
-				salada.setText(almoco.get(i + 1));
-			}
-			if (node.equalsIgnoreCase("sobremesa")) {
-				TextView salada = (TextView) findViewById(R.id.almocoSobremesa);
-				salada.setText(almoco.get(i + 1));
-			}
-		}
-		ArrayList<String> janta = ufmt.getJanta();
-		for (int j = 0; j < janta.size() - 1; j++) {
-			String node = almoco.get(j);
-			if (node.equalsIgnoreCase("salada")) {
-				TextView salada = (TextView) findViewById(R.id.jantaSalada);
-				salada.setText(janta.get(j + 1));
-			}
-			if (node.equalsIgnoreCase("prato proteico")) {
-				TextView salada = (TextView) findViewById(R.id.jantaPp);
-				salada.setText(janta.get(j + 1));
-			}
-			if (node.equalsIgnoreCase("guarnição")) {
-				TextView salada = (TextView) findViewById(R.id.jantaGuarnicao);
-				salada.setText(janta.get(j + 1));
-			}
-			if (node.equalsIgnoreCase("acompanhamento")) {
-				TextView salada = (TextView) findViewById(R.id.jantaAcompanhamento);
-				salada.setText(janta.get(j + 1));
-			}
-			if (node.equalsIgnoreCase("sobremesa")) {
-				TextView salada = (TextView) findViewById(R.id.jantaSobremesa);
-				salada.setText(janta.get(j + 1));
-			}
-		}
 	}
-
 }

@@ -1,46 +1,124 @@
 package br.com.wesllei.ruufmt;
 
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
+import com.example.teste.MainActivity.SectionsPagerAdapter;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import br.com.wesllei.ruufmt.R;
+import br.com.wesllei.ruufmt.gcm.GCMUtil;
 
 import android.os.Bundle;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TabHost;
 
 public class MainActivity extends Activity {
-	private Ufmt ufmt;
-	private ListView listViewAlmoco;
-	private ListView listViewJanta;
-	private AdView adView;
+	Context context;
 
+	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+	public static final String PREFS_NAME = "settings";
+	
+	private String[] drawerListViewItems;
+    private ListView drawerListView;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_progess);
-		this.adView = new AdView(this, AdSize.BANNER, "a152078f05557b0");
-		ufmt = new Ufmt(this);
-		ufmt.execute();
-	}
+		context = getApplicationContext();
+		setContentView(R.layout.activity_main);
+		
+		if (checkPlayServices()) {
+			processGDMId();
+		}
+		
+		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		
+		drawerListViewItems = getResources().getStringArray(R.array.items);
 
+		// get ListView defined in activity_main.xml
+		drawerListView = (ListView) findViewById(R.id.left_drawer);
+
+		
+		// Set the adapter for the list view
+		drawerListView.setAdapter(new ArrayAdapter<String>(this,
+				R.layout.drawer_listview_item, drawerListViewItems));
+		
+		//Icon to option drawer
+		drawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                drawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description */
+                R.string.drawer_close  /* "close drawer" description */
+                );
+		drawerLayout.setDrawerListener(drawerToggle);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        
+        
+        mSectionsPagerAdapter = new SectionsPagerAdapter(
+				getSupportFragmentManager());
+
+		// Set up the ViewPager with the sections adapter.
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+	}
+	
+	@Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+	
+	@Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (drawerToggle.onOptionsItemSelected(item)) {
+          return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
+    }
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_activity_actions, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-
+	
+	/* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerListView);
+        menu.findItem(R.id.action_update).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+	
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -54,89 +132,47 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-		case R.id.action_update:
-			setContentView(R.layout.activity_progess);
-			ufmt = null;
-			ufmt = new Ufmt(this);
-			ufmt.execute();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	protected void alertError() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(
-				"Não foi possível baixar o cardápio. Culpa da sua 3g ou do site da UFMT.")
-				.setTitle("Erro!");
-
-		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				setContentView(R.layout.activity_main);
-				fixTab();
-			}
-		});
-
-		// 3. Get the AlertDialog from create()
-		AlertDialog dialog = builder.create();
-
-		dialog.show();
-	}
-
-	protected void setCardapio() {
-		setContentView(R.layout.activity_main);
-
-		fixTab();
-
-		String title = ufmt.getData();
-		if (title != null) {
-			setTitle(title);
-		}
-
-		listViewAlmoco = (ListView) findViewById(R.id.listAlmoco);
-		CardapioListAdapter almocoAdapter = new CardapioListAdapter(this,
-				ufmt.getAmoco());
-
-		listViewAlmoco.addFooterView((View) adView);
-		listViewAlmoco.setAdapter(almocoAdapter);
-
-		listViewJanta = (ListView) findViewById(R.id.listJanta);
-		CardapioListAdapter jantaAdapter = new CardapioListAdapter(this,
-				ufmt.getJanta());
-
-		listViewJanta.addFooterView((View) adView);
-		listViewJanta.setAdapter(jantaAdapter);
-
-		AdRequest request = new AdRequest();
-		request.addTestDevice(AdRequest.TEST_EMULATOR);
-		request.addTestDevice("0149BD310E016012");
-
-		adView.loadAd(request);
-	}
-
-	@Override
 	public void onDestroy() {
-		if (adView != null) {
-			adView.destroy();
-		}
 		super.onDestroy();
 	}
 
-	private void fixTab() {
-		TabHost tabs = (TabHost) findViewById(R.id.tabhost);
-		tabs.setup();
-		TabHost.TabSpec spec = tabs.newTabSpec("tag1");
-		spec.setContent(R.id.almoco);
-		spec.setIndicator("Almoço");
-		tabs.addTab(spec);
-		spec = tabs.newTabSpec("tag2");
-		spec.setContent(R.id.janta);
-		spec.setIndicator("Janta");
-		tabs.addTab(spec);
-		tabs.setCurrentTab(0);
+	
+	private void processGDMId() {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		String GCMId = settings.getString("GCMId", "");
+		if (GCMId.isEmpty()) {
+			GCMUtil gcm = new GCMUtil(context);
+			gcm.setGCMIdInBackground();
+		} else {
+
+		}
+	}
+
+	// You need to do the Play Services APK check here too.
+	@Override
+	protected void onResume() {
+		super.onResume();
+		checkPlayServices();
+	}
+
+	/**
+	 * Check the device to make sure it has the Google Play Services APK. If it
+	 * doesn't, display a dialog that allows users to download the APK from the
+	 * Google Play Store or enable it in the device's system settings.
+	 */
+	private boolean checkPlayServices() {
+		int resultCode = GooglePlayServicesUtil
+				.isGooglePlayServicesAvailable(this);
+		if (resultCode != ConnectionResult.SUCCESS) {
+			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+				GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+						PLAY_SERVICES_RESOLUTION_REQUEST).show();
+			} else {
+				Log.i("GCM", "This device is not supported.");
+				// finish();
+			}
+			return false;
+		}
+		return true;
 	}
 }

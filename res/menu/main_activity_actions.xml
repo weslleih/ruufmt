@@ -1,9 +1,9 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/action_update"
         android:icon="@drawable/navigation_refresh_d"
-        android:title="@string/action_update"
-        android:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/action_update"/>
+
 </menu>

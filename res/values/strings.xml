@@ -8,5 +8,21 @@
     <string name="acompanhamento">Acompanhamento</string>
     <string name="sobremesa">Sobremesa</string>
     <string name="action_update">Atualizar</string>
-
+    
+    <string name="drawer_open">Abrir opções</string>
+    <string name="drawer_close">Fechar opções</string>
+    
+    <string name="title_section1">Café</string>
+    <string name="title_section2">Almoço</string>
+    <string name="title_section3">Janta</string>
+	
+    <string-array name="items">
+        <item>Item 1</item>
+        <item>Item 2</item>
+        <item>Item 3</item>
+        <item>Item 4</item>
+        <item>Item 5</item>
+        <item>Item 6</item>
+    </string-array>
+    
 </resources>

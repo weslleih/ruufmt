@@ -15,7 +15,7 @@ public class CardapioListAdapter extends BaseAdapter {
 	
 	public CardapioListAdapter(Context context,List<Prato> cardapio) {
 		super();
-		this.cardapio = cardapio;
+		//this.cardapio = cardapio;
 		this.context = context;
 	}
 
@@ -51,7 +51,7 @@ public class CardapioListAdapter extends BaseAdapter {
 		textTipo.setText(tipo);
 
 		TextView textCapital = (TextView) view.findViewById(R.id.prato);
-		textCapital.setText(prato.getPrato());
+		textCapital.setText(prato.getTipo());
 		return view;
 	}
 

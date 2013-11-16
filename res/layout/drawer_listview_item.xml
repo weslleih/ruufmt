@@ -7,7 +7,5 @@
     android:textColor="#fff"
     android:textSize="20sp"
     android:gravity="center_vertical"
-    android:paddingStart="14.5sp"
-    android:paddingEnd="14.5sp"
-    android:minHeight="35sp"
+    android:minHeight="50sp"
 />

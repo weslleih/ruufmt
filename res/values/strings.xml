@@ -17,12 +17,9 @@
     <string name="title_section3">Janta</string>
 	
     <string-array name="items">
-        <item>Item 1</item>
-        <item>Item 2</item>
-        <item>Item 3</item>
-        <item>Item 4</item>
-        <item>Item 5</item>
-        <item>Item 6</item>
+        <item>Configurações</item>
+        <item>Doar C8H10N4O2</item>
+        <item>Compartilhar</item>
     </string-array>
     
 </resources>

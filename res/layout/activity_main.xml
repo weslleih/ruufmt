@@ -10,12 +10,6 @@
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
-        <fragment
-            android:id="@+id/list"
-            android:name="br.com.wesllei.ruufmt.CardapioSectionsFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent" />
     </FrameLayout>
 
     <!-- The navigation drawer -->

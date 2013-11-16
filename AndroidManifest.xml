@@ -50,6 +50,7 @@
         </receiver>
 
         <service android:name=".gcm.GcmIntentService" />
+        <activity android:name="CardapioFragmentActivity"></activity>
     </application>
 
 </manifest>

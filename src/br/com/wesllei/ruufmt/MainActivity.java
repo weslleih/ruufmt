@@ -1,21 +1,18 @@
 package br.com.wesllei.ruufmt;
 
-import com.example.teste.MainActivity.SectionsPagerAdapter;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-
-import br.com.wesllei.ruufmt.R;
-import br.com.wesllei.ruufmt.gcm.GCMUtil;
-
-import android.os.Bundle;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -23,8 +20,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import br.com.wesllei.ruufmt.R;
+import br.com.wesllei.ruufmt.gcm.GCMUtil;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends FragmentActivity {
 	Context context;
 
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -70,12 +70,11 @@ public class MainActivity extends Activity {
         getActionBar().setHomeButtonEnabled(true);
         
         
-        mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
-
-		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+        
+        CardapioFragment fragment = new CardapioFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        
 	}
 	
 	@Override
@@ -142,7 +141,7 @@ public class MainActivity extends Activity {
 		String GCMId = settings.getString("GCMId", "");
 		if (GCMId.isEmpty()) {
 			GCMUtil gcm = new GCMUtil(context);
-			gcm.setGCMIdInBackground();
+			gcm.registerInBackground();
 		} else {
 
 		}

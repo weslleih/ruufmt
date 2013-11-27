@@ -15,11 +15,13 @@
     <string name="title_section1">Café</string>
     <string name="title_section2">Almoço</string>
     <string name="title_section3">Janta</string>
+    <string name="title_section4">Anúncio</string>
 	
     <string-array name="items">
         <item>Configurações</item>
         <item>Doar C8H10N4O2</item>
         <item>Compartilhar</item>
+        <item>Anunciar</item>
     </string-array>
     
 </resources>

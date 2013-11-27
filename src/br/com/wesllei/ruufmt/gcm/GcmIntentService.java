@@ -1,8 +1,16 @@
 package br.com.wesllei.ruufmt.gcm;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+
+import br.com.wesllei.ruufmt.Cardapio;
 import br.com.wesllei.ruufmt.MainActivity;
+import br.com.wesllei.ruufmt.MappingCardapio;
+import br.com.wesllei.ruufmt.R;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -10,16 +18,16 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 public class GcmIntentService extends IntentService {
 	public static final int NOTIFICATION_ID = 1;
-	private NotificationManager mNotificationManager;
+
 	NotificationCompat.Builder builder;
-	
-	public static final String TAG = "GCM";
+
+	public static final String TAG = "GCMUtil";
 
 	public GcmIntentService() {
 		super("GcmIntentService");
@@ -50,44 +58,78 @@ public class GcmIntentService extends IntentService {
 				// If it's a regular GCM message, do some work.
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
 					.equals(messageType)) {
-				// This loop represents the service doing some work.
-				for (int i = 0; i < 5; i++) {
-					Log.i(TAG,
-							"Working... " + (i + 1) + "/5 @ "
-									+ SystemClock.elapsedRealtime());
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-					}
-				}
-				Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
 				// Post notification of received message.
-				sendNotification("Received: " + extras.toString());
-				Log.i(TAG, "Received: " + extras.toString());
+				// MappingCardapio mCardapio =
+				// MappingCardapio(extras.getString("cardapio"));
+				// Cardapio cardapio = mCardapio.getCardapio();
+
+				Gson gson = new Gson();
+				Cardapio cardapio = gson.fromJson(extras.getString("cardapio"),
+						Cardapio.class);
+
+				if(saveCardapio(cardapio)){
+					sendNotification(cardapio.getAlmoco().getPp());
+				}
+
+				Log.i(TAG, cardapio.getDate().toString());
+				// Log.i(TAG, "Received: " + extras.getString("cardapio"));
 			}
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
-		gcmBroadcastReceiver.completeWakefulIntent(intent);
+		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
 
 	// Put the message into a notification and post it.
 	// This is just one simple example of what you might choose to do with
 	// a GCM message.
 	private void sendNotification(String msg) {
-		mNotificationManager = (NotificationManager) this
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, MainActivity.class), 0);
-
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-				this)
-				//.setSmallIcon(R.drawable.ic_stat_gcm)
-				.setContentTitle("GCM Notification")
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-				.setContentText(msg);
+				this).setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle("Cardápio novo").setContentText(msg);
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(this, MainActivity.class);
 
-		mBuilder.setContentIntent(contentIntent);
+		// The stack builder object will contain an artificial back stack for
+		// the
+		// started Activity.
+		// This ensures that navigating backward from the Activity leads out of
+		// your application to the Home screen.
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		// Adds the back stack for the Intent (but not the Intent itself)
+		stackBuilder.addParentStack(MainActivity.class);
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPendingIntent);
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		// mId allows you to update the notification later on.
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+	}
+
+	private boolean saveCardapio(Cardapio cardapio) {
+		File file = new File(this.getFilesDir(), "cardapio");
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		boolean keep = true;
+
+		try {
+			fos = new FileOutputStream(file);
+			oos = new ObjectOutputStream(fos);
+			oos.writeObject(cardapio);
+		} catch (Exception e) {
+			keep = false;
+		} finally {
+			try {
+				if (oos != null)
+					oos.close();
+				if (fos != null)
+					fos.close();
+				if (keep == false)
+					file.delete();
+			} catch (Exception e) { /* do nothing */
+			}
+		}
+		return keep;
 	}
 }

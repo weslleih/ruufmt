@@ -1,5 +1,11 @@
 package br.com.wesllei.ruufmt;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -21,7 +27,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import br.com.wesllei.ruufmt.R;
-import br.com.wesllei.ruufmt.gcm.GCMUtil;
+import br.com.wesllei.ruufmt.gcm.GcmUtil;
 
 
 public class MainActivity extends FragmentActivity {
@@ -34,6 +40,7 @@ public class MainActivity extends FragmentActivity {
     private ListView drawerListView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private Cardapio cardapio;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,8 @@ public class MainActivity extends FragmentActivity {
 		if (checkPlayServices()) {
 			processGDMId();
 		}
+		
+		setCardapio();
 		
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		
@@ -140,7 +149,7 @@ public class MainActivity extends FragmentActivity {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		String GCMId = settings.getString("GCMId", "");
 		if (GCMId.isEmpty()) {
-			GCMUtil gcm = new GCMUtil(context);
+			GcmUtil gcm = new GcmUtil(context);
 			gcm.registerInBackground();
 		} else {
 
@@ -174,4 +183,25 @@ public class MainActivity extends FragmentActivity {
 		}
 		return true;
 	}
+	
+	private void setCardapio(){
+		File file = new File(this.getFilesDir(), "cardapio");
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		try {
+			fis = new FileInputStream(file);
+			ois = new ObjectInputStream(fis);
+			cardapio = (Cardapio) ois.readObject();
+		} catch (Exception e) {
+			cardapio = null;
+		} finally {
+			try {
+				if (ois != null)
+					ois.close();
+				if (fis != null)
+					fis.close();
+			} catch (Exception e) { /* do nothing */
+			}
+		}	
+	} 
 }

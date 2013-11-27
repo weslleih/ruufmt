@@ -2,6 +2,11 @@ package br.com.wesllei.ruufmt.gcm;
 
 import java.io.IOException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import br.com.wesllei.ruufmt.util.Json;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.content.Context;
@@ -10,7 +15,7 @@ import android.os.AsyncTask;
 import android.provider.Settings.System;
 import android.util.Log;
 
-public class GCMUtil {
+public class GcmUtil {
 
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
@@ -26,7 +31,7 @@ public class GCMUtil {
 
 	String regid;
 
-	public GCMUtil(Context context) {
+	public GcmUtil(Context context) {
 		super();
 		this.context = context;
 		this.gcm = GoogleCloudMessaging.getInstance(context);
@@ -44,7 +49,7 @@ public class GCMUtil {
 			@Override
 			protected String doInBackground(Object... params) {
 				String msg = "";
-				
+
 				try {
 					if (gcm == null) {
 						gcm = GoogleCloudMessaging.getInstance(context);
@@ -52,34 +57,30 @@ public class GCMUtil {
 					Log.i(TAG, SENDER_ID);
 					regid = gcm.register(SENDER_ID);
 					msg = "Device registered, registration ID=" + regid;
-
-					// You should send the registration ID to your server over
-					// HTTP,
-					// so it can use GCM/HTTP or CCS to send messages to your
-					// app.
-					// The request to your server should be authenticated if
-					// your app
-					// is using accounts.
 					sendRegistrationIdToBackend();
-
-					// For this demo: we don't need to send it because the
-					// device
-					// will send upstream messages to a server that echo back
-					// the
-					// message using the 'from' address in the message.
-
-					// Persist the regID - no need to register again.
-					storeRegistrationId(context, regid);
+					sendRegistrationIdToServer(context, regid);
 				} catch (IOException ex) {
 					msg = "Error :" + ex.getMessage();
-					// If there is an error, don't just keep trying to register.
-					// Require the user to click a button again, or perform
-					// exponential back-off.
 				}
 				Log.i(TAG, msg);
 				return msg;
 			}
-		}.execute();;
+		}.execute();
+		;
+	}
+
+	private void sendRegistrationIdToServer(Context context, String regid) {
+		JSONObject request;
+		request = Json.getJson("http://wesllei.com.br/ruufmt/user/add/"
+				.concat(regid));
+		try {
+			if ((Boolean) request.get("status")) {
+				storeRegistrationId(context, regid);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void storeRegistrationId(Context context, String regid) {
@@ -94,5 +95,5 @@ public class GCMUtil {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 }

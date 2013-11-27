@@ -1,18 +1,24 @@
 package br.com.wesllei.ruufmt;
 
+import java.io.Serializable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Prato {
+public class Prato implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2656896334983643324L;
 	@SerializedName("salada")
-	private String salada;
+	private String salada = new String();
 	@SerializedName("pp")
-	private String pp;
+	private String pp = new String();
 	@SerializedName("guarnicao")
-	private String guarnicao;
+	private String guarnicao = new String();
 	@SerializedName("acompanhamento")
-	private String acompanhamento;
+	private String acompanhamento = new String();
 	@SerializedName("sobremesa")
-	private String sobremesa;
+	private String sobremesa = new String();
 
 	public String getSalada() {
 		return salada;

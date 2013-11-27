@@ -1,22 +1,15 @@
 package br.com.wesllei.ruufmt;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -40,7 +33,6 @@ public class MainActivity extends FragmentActivity {
     private ListView drawerListView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private Cardapio cardapio;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +43,6 @@ public class MainActivity extends FragmentActivity {
 		if (checkPlayServices()) {
 			processGDMId();
 		}
-		
-		setCardapio();
 		
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		
@@ -184,24 +174,8 @@ public class MainActivity extends FragmentActivity {
 		return true;
 	}
 	
-	private void setCardapio(){
-		File file = new File(this.getFilesDir(), "cardapio");
-		FileInputStream fis = null;
-		ObjectInputStream ois = null;
-		try {
-			fis = new FileInputStream(file);
-			ois = new ObjectInputStream(fis);
-			cardapio = (Cardapio) ois.readObject();
-		} catch (Exception e) {
-			cardapio = null;
-		} finally {
-			try {
-				if (ois != null)
-					ois.close();
-				if (fis != null)
-					fis.close();
-			} catch (Exception e) { /* do nothing */
-			}
-		}	
-	} 
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+	}
 }

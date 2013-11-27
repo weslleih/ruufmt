@@ -1,5 +1,6 @@
 package br.com.wesllei.ruufmt;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.content.Context;
@@ -9,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class CardapioListAdapter extends BaseAdapter {
+public class CardapioListAdapter extends BaseAdapter implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7585259815612094866L;
 	private Context context;
 	private List<ItemPrato> cardapio;
 
@@ -55,5 +60,4 @@ public class CardapioListAdapter extends BaseAdapter {
 		textCapital.setText(itemPrato.getPrato());
 		return view;
 	}
-
 }

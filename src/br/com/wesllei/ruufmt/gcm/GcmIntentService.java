@@ -1,12 +1,11 @@
 package br.com.wesllei.ruufmt.gcm;
 
-import java.io.File;
+
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
 import br.com.wesllei.ruufmt.Cardapio;
 import br.com.wesllei.ruufmt.MainActivity;
-import br.com.wesllei.ruufmt.MappingCardapio;
 import br.com.wesllei.ruufmt.R;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -107,26 +106,24 @@ public class GcmIntentService extends IntentService {
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 
+	@SuppressWarnings("static-access")
 	private boolean saveCardapio(Cardapio cardapio) {
-		File file = new File(this.getFilesDir(), "cardapio");
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		boolean keep = true;
-
 		try {
-			fos = new FileOutputStream(file);
+			fos = this.openFileOutput("cardapio", this.MODE_PRIVATE);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(cardapio);
 		} catch (Exception e) {
 			keep = false;
+			Log.i("File Out", e.getMessage());
 		} finally {
 			try {
 				if (oos != null)
 					oos.close();
 				if (fos != null)
 					fos.close();
-				if (keep == false)
-					file.delete();
 			} catch (Exception e) { /* do nothing */
 			}
 		}

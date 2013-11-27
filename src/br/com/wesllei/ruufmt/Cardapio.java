@@ -1,20 +1,34 @@
 package br.com.wesllei.ruufmt;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
+import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Cardapio {
+public class Cardapio implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3502921314965074769L;
 	@SerializedName("almoco")
-	private Prato almoco;
+	private Prato almoco = new Prato();
 	@SerializedName("janta")
-	private Prato janta;
+	private Prato janta = new Prato();
 	@SerializedName("date")
 	private Long date;
 
-	public ArrayList<ItemPrato> getAlmoco() {
+	public Prato getAlmoco() {
+		return almoco;
+	}
+
+	public ArrayList<ItemPrato> getAlmocoList() {
 		ArrayList<ItemPrato> list = new ArrayList<ItemPrato>();
 		list.add(new ItemPrato("SALADA", almoco.getSalada()));
 		list.add(new ItemPrato("PRATO PROTEICO", almoco.getPp()));
@@ -29,7 +43,11 @@ public class Cardapio {
 		this.almoco = almoco;
 	}
 
-	public ArrayList<ItemPrato> getJanta() {
+	public Prato getJanta() {
+		return janta;
+	}
+
+	public ArrayList<ItemPrato> getJantaList() {
 		ArrayList<ItemPrato> list = new ArrayList<ItemPrato>();
 		list.add(new ItemPrato("SALADA", janta.getSalada()));
 		list.add(new ItemPrato("PRATO PROTEICO", janta.getPp()));
@@ -42,12 +60,37 @@ public class Cardapio {
 	public void setJanta(Prato janta) {
 		this.janta = janta;
 	}
-	
+
 	public Date getDate() {
 		return new Date(date);
 	}
 
 	public void setDate(Long date) {
 		this.date = date;
+	}
+
+	public void setCardapio(Context context) {
+		Cardapio cardapioTemp;
+		File file = new File(context.getFilesDir(), "cardapio");
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		try {
+			fis = new FileInputStream(file);
+			ois = new ObjectInputStream(fis);
+			cardapioTemp = (Cardapio) ois.readObject();
+			this.setAlmoco(cardapioTemp.getAlmoco());
+			this.setJanta(cardapioTemp.getJanta());
+			this.setDate(cardapioTemp.getDate().getTime());
+		} catch (Exception e) {
+			Log.i("File", e.getMessage());
+		} finally {
+			try {
+				if (ois != null)
+					ois.close();
+				if (fis != null)
+					fis.close();
+			} catch (Exception e) { /* do nothing */
+			}
+		}
 	}
 }

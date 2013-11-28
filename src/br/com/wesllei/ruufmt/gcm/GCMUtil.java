@@ -12,15 +12,12 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.provider.Settings.System;
 import android.util.Log;
 
 public class GcmUtil {
 
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
-	private static final String PROPERTY_APP_VERSION = "appVersion";
-	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 	public static final String PREFS_NAME = "settings";
 
 	String SENDER_ID = "563670348727";
@@ -57,7 +54,6 @@ public class GcmUtil {
 					Log.i(TAG, SENDER_ID);
 					regid = gcm.register(SENDER_ID);
 					msg = "Device registered, registration ID=" + regid;
-					sendRegistrationIdToBackend();
 					sendRegistrationIdToServer(context, regid);
 				} catch (IOException ex) {
 					msg = "Error :" + ex.getMessage();
@@ -71,15 +67,15 @@ public class GcmUtil {
 
 	private void sendRegistrationIdToServer(Context context, String regid) {
 		JSONObject request;
-		request = Json.getJson("http://wesllei.com.br/ruufmt/user/add/"
-				.concat(regid));
 		try {
-			if ((Boolean) request.get("status")) {
+			request = Json.getJson("http://wesllei.com.br/ruufmt/user/add/"
+					.concat(regid));
+			if (request != null && (Boolean) request.get("status")) {
 				storeRegistrationId(context, regid);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.i("Server Registration", e.getMessage());
 		}
 	}
 
@@ -90,10 +86,4 @@ public class GcmUtil {
 		editor.putString("GCMId", regid);
 		editor.commit();
 	}
-
-	private void sendRegistrationIdToBackend() {
-		// TODO Auto-generated method stub
-
-	}
-
 }

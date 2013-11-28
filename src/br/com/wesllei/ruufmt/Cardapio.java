@@ -2,6 +2,7 @@ package br.com.wesllei.ruufmt;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -81,8 +82,11 @@ public class Cardapio implements Serializable{
 			this.setAlmoco(cardapioTemp.getAlmoco());
 			this.setJanta(cardapioTemp.getJanta());
 			this.setDate(cardapioTemp.getDate().getTime());
-		} catch (Exception e) {
+		} catch (IOException e) {
 			Log.i("File", e.getMessage());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			try {
 				if (ois != null)

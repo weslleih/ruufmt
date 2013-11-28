@@ -1,14 +1,10 @@
 package br.com.wesllei.ruufmt;
 
-import java.util.ArrayList;
-
-import br.com.wesllei.ruufmt.CardapioFragment.SectionsPagerAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import android.support.v4.app.Fragment;
-import android.app.Activity;
-import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +13,9 @@ import android.widget.ListView;
 public class CardapioListFragment extends Fragment {
 
 	private CardapioListAdapter adapter;
+	private AdView adView;
 	public static final String ARG_REFEICAO_NUMBER = "refeicao";
+	private final static String MY_AD_UNIT_ID = "a152078f05557b0";
 
 	@Override
 	public void onActivityCreated(Bundle state) {
@@ -27,42 +25,41 @@ public class CardapioListFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(false);
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey("List")) {
-			this.adapter = (CardapioListAdapter) savedInstanceState
-					.getSerializable("List");
-		} else {
-			
-		}
+		setRetainInstance(true);
 
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
-		// View rootView = inflater.inflate(R.layout.activity_list_cardapio,
-		// container, false);
-
 		ListView rootView = (ListView) inflater.inflate(
 				R.layout.activity_list_cardapio, container, false);
+
 		Cardapio cardapio = new Cardapio();
 		cardapio.setCardapio(this.getActivity());
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey("List")) {
-			this.adapter = (CardapioListAdapter) savedInstanceState
-					.getSerializable("List");
+
+		if (getArguments().getInt(ARG_REFEICAO_NUMBER) == 0) {
+			adapter = new CardapioListAdapter(this.getActivity(),
+					cardapio.getAlmocoList());
 		} else {
-			if (getArguments().getInt(ARG_REFEICAO_NUMBER) == 0) {
-				adapter = new CardapioListAdapter(this.getActivity(),
-						cardapio.getAlmocoList());
-			} else {
-				adapter = new CardapioListAdapter(this.getActivity(),
-						cardapio.getJantaList());
-			}
+			adapter = new CardapioListAdapter(this.getActivity(),
+					cardapio.getJantaList());
 		}
+
+		
+
+		adView = new AdView(this.getActivity());
+		adView.setAdUnitId(MY_AD_UNIT_ID);
+		adView.setAdSize(AdSize.BANNER);
+
+		rootView.addFooterView(adView);
+
+		AdRequest adRequest = new AdRequest.Builder().addTestDevice(
+				"2A8194AC3148DDFB651F5AE619F07D3D").build();
+		adView.loadAd(adRequest);
+		
 		rootView.setAdapter(adapter);
+		
 		return rootView;
 	}
 
@@ -71,10 +68,4 @@ public class CardapioListFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 
 	}
-	
-	public void onSaveInstanceState(Bundle savedState) {
-		savedState.putSerializable("list", adapter);
-		super.onSaveInstanceState(savedState);
-	}
-
 }

@@ -2,11 +2,17 @@ package br.com.wesllei.ruufmt;
 
 import java.util.Locale;
 
+
+import android.content.Context;
+
 import android.os.Bundle;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,37 +32,44 @@ public class CardapioFragment extends Fragment {
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
-	
-public CardapioFragment(){
+
+	public CardapioFragment() {
 		
+	}
+		
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 	}
 	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-		
-		View rootView = inflater.inflate(R.layout.activity_cardapio, container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the app.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getFragmentManager());
+		View rootView = inflater.inflate(R.layout.activity_cardapio, container,
+				false);
+			mSectionsPagerAdapter = new SectionsPagerAdapter(
+					getFragmentManager(),this.getActivity());
 
-		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
-		
-		return rootView;
-    }
-	
+			// Set up the ViewPager with the sections adapter.
+			mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
+			mViewPager.setAdapter(mSectionsPagerAdapter);
+
+			return rootView;
+	}
+
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
 	 */
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+	public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
-		public SectionsPagerAdapter(FragmentManager fm) {
+		private Context context;
+		public SectionsPagerAdapter(FragmentManager fm, Context context) {
 			super(fm);
+			this.context = context;
 		}
 
 		@Override
@@ -68,7 +81,7 @@ public CardapioFragment(){
 			args.putInt("refeicao", position);
 			CardapioListFragment fragment = new CardapioListFragment();
 			fragment.setArguments(args);
-	
+
 			return fragment;
 		}
 
@@ -88,6 +101,12 @@ public CardapioFragment(){
 				return getString(R.string.title_section2).toUpperCase(l);
 			}
 			return null;
+		}
+		
+		public void finishUpdate(ViewGroup container){
+			super.finishUpdate(container);
+			((MainActivity) context).setShareIntent();
+			
 		}
 	}
 }

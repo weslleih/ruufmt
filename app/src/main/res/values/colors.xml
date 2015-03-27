@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#2196f3</color>
+    <color name="primaryDarkColor">#1976d2</color>
+    <color name="primaryTextColor">#FFFFFF</color>
+    <color name="colorShare">#ff17c532</color>
+
+    <color name="drawerBackground">#F2F2F2</color>
+    <color name="selectedGray">#ffdbdbdb</color>
+
+    <color name="backgroundDay">#ff0fa4b2</color>
+    <color name="backgroundNight">#455a64</color>
+
+    <color name="pp_button">#ffdf5300</color>
+    <color name="ov_button">#ff0ea11a</color>
+    <color name="sa_button">#ff00c6ff</color>
+    <color name="gu_button">#ffa77eff</color>
+    <color name="ac_button">#ffff3f7e</color>
+    <color name="su_button">#ffad00ff</color>
+    <color name="so_button">#ff005aff</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="fuchsia">#FF00FF</color>
+    <color name="red">#FF0000</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="gray">#808080</color>
+    <color name="olive">#808000</color>
+    <color name="purple">#800080</color>
+    <color name="maroon">#800000</color>
+    <color name="aqua">#00FFFF</color>
+    <color name="lime">#00FF00</color>
+    <color name="teal">#008080</color>
+    <color name="green">#008000</color>
+    <color name="blue">#0000FF</color>
+    <color name="navy">#000080</color>
+    <color name="black">#000000</color>
+</resources>

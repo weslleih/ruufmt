@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">RU UFMT</string>
+    <string name="drawer_open">Menu aberto</string>
+    <string name="drawer_close">Menu fechado</string>
+    <string name="action_settings">Configurações</string>
+
+    <string name="meal_title">Cardápio</string>
+    <string name="event_title">Eventos</string>
+
+    <string name="pp">Prato principal</string>
+    <string name="ov">Opção vegetariana</string>
+    <string name="sa">Salada</string>
+    <string name="gu">Guarnição</string>
+    <string name="ac">Acompanhamento</string>
+    <string name="so">Sobremesa</string>
+    <string name="su">Suco</string>
+</resources>

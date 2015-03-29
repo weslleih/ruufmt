@@ -61,15 +61,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
             ProgressBar progressBar = ((EventCardViewHolder) viewHolder).progressBar;
             ((EventCardViewHolder) viewHolder).cardTitle.setText(event.getName());
             ((EventCardViewHolder) viewHolder).cardHead.setBackgroundColor(Color.parseColor(event.getHeadColor()));
-            if(imgFile.exists()){
+            if (imgFile.exists()) {
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                setEventImage(myBitmap,imageView,progressBar);
-            }else {
+                setEventImage(myBitmap, imageView, progressBar);
+            } else {
                 progressBar.setVisibility(View.VISIBLE);
-                DownloadAsyncTask dowImage = new DownloadAsyncTask(context,this,imageView,event,true,progressBar);
+                DownloadAsyncTask dowImage = new DownloadAsyncTask(context, this, imageView, event, true, progressBar);
                 dowImage.execute(event.getImageCardUrl());
             }
-
         } else {
             Meal menu = (Meal) cardList.get(position);
             if (menu.getType() == 0) {
@@ -77,10 +76,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
                 ((MealCardViewHolder) viewHolder).cardHead.setBackground(context.getResources().getDrawable(R.color.backgroundDay));
                 ((MealCardViewHolder) viewHolder).cardTitle.setText("Almoço");
             } else {
-                ((MealCardViewHolder) viewHolder).iconHead.setImageResource(R.drawable.ic_brightness_3);
-                ((MealCardViewHolder) viewHolder).cardHead.setBackground(context.getResources().getDrawable(R.color.backgroundNight));
-                ((MealCardViewHolder) viewHolder).cardTitle.setText("Janta");
+                if (menu.getType() == 1) {
+                    ((MealCardViewHolder) viewHolder).iconHead.setImageResource(R.drawable.ic_brightness_3);
+                    ((MealCardViewHolder) viewHolder).cardHead.setBackground(context.getResources().getDrawable(R.color.backgroundNight));
+                    ((MealCardViewHolder) viewHolder).cardTitle.setText("Jantar");
+                }else{
+                    ((MealCardViewHolder) viewHolder).iconHead.setImageResource(R.drawable.ic_wb_sunny);
+                    ((MealCardViewHolder) viewHolder).cardHead.setBackground(context.getResources().getDrawable(R.color.backgroundDay));
+                    ((MealCardViewHolder) viewHolder).cardTitle.setText("Sábado");
+                }
             }
+            ((MealCardViewHolder) viewHolder).date.setText(menu.getFormatedDate());
             ((MealCardViewHolder) viewHolder).pp.setText(menu.getPp());
             ((MealCardViewHolder) viewHolder).ov.setText(menu.getOv());
             ((MealCardViewHolder) viewHolder).sa.setText(menu.getSa());
@@ -91,29 +97,29 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
         }
     }
 
-    public void refreshList(ArrayList list){
-        int i,v;
-        while (this.cardList.size()>0){
+    public void refreshList(ArrayList list) {
+        int i, v;
+        while (this.cardList.size() > 0) {
             this.cardList.remove(0);
             this.notifyItemRemoved(0);
         }
-        for(i=0;i<list.size();i++) {
+        for (i = 0; i < list.size(); i++) {
             this.cardList.add((CardData) list.get(i));
-            v = this.cardList.size()-1;
+            v = this.cardList.size() - 1;
             this.notifyItemInserted(v);
         }
         this.notifyDataSetChanged();
     }
 
-    public void setEventImage(final Bitmap myBitmap, final ImageView imageView, final ProgressBar progressBar){
+    public void setEventImage(final Bitmap myBitmap, final ImageView imageView, final ProgressBar progressBar) {
         imageView.post(new Runnable() {
             @Override
             public void run() {
                 double w = myBitmap.getWidth();
                 double h = myBitmap.getHeight();
-                double ratio = w/h;
-                Integer nh = Integer.valueOf((int) Math.round(imageView.getWidth()/ratio));
-                imageView.setImageBitmap(Bitmap.createScaledBitmap(myBitmap,imageView.getWidth(),nh,true));
+                double ratio = w / h;
+                Integer nh = Integer.valueOf((int) Math.round(imageView.getWidth() / ratio));
+                imageView.setImageBitmap(Bitmap.createScaledBitmap(myBitmap, imageView.getWidth(), nh, true));
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -133,6 +139,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
 
     class MealCardViewHolder extends GeneralViewHolder {
 
+        public TextView date;
         public TextView pp;
         public TextView ov;
         public TextView sa;
@@ -146,6 +153,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
 
         public MealCardViewHolder(View itemView) {
             super(itemView);
+            date = (TextView) itemView.findViewById(R.id.date);
             pp = (TextView) itemView.findViewById(R.id.pp);
             ov = (TextView) itemView.findViewById(R.id.ov);
             sa = (TextView) itemView.findViewById(R.id.sa);

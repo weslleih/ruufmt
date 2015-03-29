@@ -32,11 +32,10 @@ import java.util.Date;
  * Created by wesllei on 25/03/15.
  */
 public class Communication {
-    private final static String SERVER_ADDRESS = "http://192.168.1.7:3000";
+    private final static String SERVER_ADDRESS = "http://ruufmt-weslleih.rhcloud.com";
     private final static String SERVER_REGISTER = "/users/add/";
     private final static String SERVER_GET_DATA = "/data";
     private static final String PREFS_NAME = "settings";
-    private final static String UFA_ADDRESS = "http://www.ufmt.br/ufmt/unidade/index.php/secao/visualizar/3793/RU";
     private final Context context;
     private MainFragment frag;
     private RecyclerView.Adapter adapter;
@@ -47,10 +46,8 @@ public class Communication {
 
     public void getDataServer(final MainFragment frag, final RecyclerView.Adapter adapter) {
         this.frag = frag;
-        this.adapter = adapter;
+        this.adapter = adapter; 
         new AsyncTask<String, Void, Void>() {
-            ArrayList<CardData> items = new ArrayList();
-
             @Override
             protected Void doInBackground(String... params) {
                 String url = SERVER_ADDRESS + SERVER_GET_DATA;
@@ -101,6 +98,7 @@ public class Communication {
     private ArrayList jsonToDataArray(JSONObject json) {
         JSONObject lunch = null;
         JSONObject dinner = null;
+        JSONObject saturday = null;
         JSONObject event = null;
         ArrayList<CardData> list = new ArrayList<CardData>();
         SharedPreferences sharedPref = ((Activity) context).getPreferences(Context.MODE_PRIVATE);
@@ -117,6 +115,13 @@ public class Communication {
         try {
             dinner = json.getJSONObject("dinner");
             list.add(new Meal(dinner, 1));
+            editor.putString("lastListDate", sdf.format(now));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            saturday = json.getJSONObject("saturday");
+            list.add(new Meal(saturday, 2));
             editor.putString("lastListDate", sdf.format(now));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -173,18 +178,22 @@ public class Communication {
 
     public ArrayList processList(ArrayList list, String type) {
         int i;
-        Calendar c1 = Calendar.getInstance();
-        c1.add(Calendar.DAY_OF_YEAR, 0);
-        Calendar c2 = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        Calendar itemTime = Calendar.getInstance();
+        ArrayList newList = new ArrayList();
 
-        if (list != null && type != null &&type.contentEquals("card")) {
+        if (list != null && type != null && type.contentEquals("card")) {
             for (i = 0; i < list.size(); i++) {
-                if (!(list.get(i) instanceof Meal)) {
-                    if (list.get(i) instanceof Event) {
-                        c2.setTime(((Event) list.get(i)).getPromoteDate());
-                        if (!(c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
-                                && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR))) {
-                            list.remove(i);
+                if ((list.get(i) instanceof Meal)) {
+                    itemTime.setTime(((Meal) list.get(i)).getDate());
+                    if (itemTime.get(Calendar.DAY_OF_MONTH) >= now.get(Calendar.DAY_OF_MONTH)) {
+                        if ((((Meal) list.get(i)).getType() == 0 || ((Meal) list.get(i)).getType() == 2) && now.get(Calendar.HOUR_OF_DAY) < 14 && now.get(Calendar.MINUTE) < 31) {
+                            newList.add(list.get(i));
+                        } else {
+                            if (((Meal) list.get(i)).getType() == 1 && now.get(Calendar.HOUR_OF_DAY) < 17 && now.get(Calendar.MINUTE) < 1) {
+                                newList.add(list.get(i));
+                            }
                         }
                     }
                 }
@@ -197,16 +206,8 @@ public class Communication {
         }
     }
 
-    private void storeRegistrationId(Context context, String regid) {
-        SharedPreferences settings = context
-                .getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("GCMId", regid);
-        editor.commit();
-    }
-
     public boolean sendGegIdToServer(String regid) {
-        String url = SERVER_ADDRESS + SERVER_REGISTER +regid;
+        String url = SERVER_ADDRESS + SERVER_REGISTER + regid;
         StringBuilder stringBuilder = new StringBuilder();
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
@@ -229,9 +230,9 @@ public class Communication {
             }
             JSONObject json = parse(String.valueOf(stringBuilder));
             String message = json.getString("message");
-            if(message.equals("sucess")){
+            if (message.equals("sucess")) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         } catch (Exception e) {

@@ -7,6 +7,9 @@
     <string name="meal_title">Cardápio</string>
     <string name="event_title">Eventos</string>
 
+    <string name="today">Hoje</string>
+    <string name="yesterday">Ontem</string>
+
     <string name="pp">Prato principal</string>
     <string name="ov">Opção vegetariana</string>
     <string name="sa">Salada</string>

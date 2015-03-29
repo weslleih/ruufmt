@@ -76,6 +76,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 for (int position : reverseSortedPositions) {
                                     itemList.remove(position);
                                     ca.notifyItemRemoved(position);
+                                    Communication communication = new Communication(context);
+                                    communication.saveData(itemList);
                                 }
                                 ca.notifyDataSetChanged();
                             }
@@ -85,6 +87,8 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 for (int position : reverseSortedPositions) {
                                     itemList.remove(position);
                                     ca.notifyItemRemoved(position);
+                                    Communication communication = new Communication(context);
+                                    communication.saveData(itemList);
                                 }
                                 ca.notifyDataSetChanged();
                             }

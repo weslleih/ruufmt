@@ -17,4 +17,5 @@
     <string name="ac">Acompanhamento</string>
     <string name="so">Sobremesa</string>
     <string name="su">Suco</string>
+    <string name="send_to">Enviar para</string>
 </resources>

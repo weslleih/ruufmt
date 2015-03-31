@@ -1,19 +1,34 @@
 package com.wesllei.ruufmt;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -53,7 +68,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
     }
 
     @Override
-    public void onBindViewHolder(GeneralViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final GeneralViewHolder viewHolder, int position) {
         if (getItemViewType(position) > 0) {
             Event event = (Event) cardList.get(position);
             File imgFile = new File(event.getImageCardFile());
@@ -95,6 +110,39 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
             ((MealCardViewHolder) viewHolder).so.setText(menu.getSo());
             ((MealCardViewHolder) viewHolder).su.setText(menu.getSu());
         }
+        viewHolder.shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap b = Bitmap.createBitmap(viewHolder.shareBody.getWidth(),viewHolder.shareBody.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(b);
+                Drawable bgDrawable = viewHolder.shareBody.getBackground();
+                if (bgDrawable!=null)
+                    bgDrawable.draw(canvas);
+                else
+                    canvas.drawColor(Color.WHITE);
+                viewHolder.shareBody.draw(canvas);
+
+
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.setType("image/jpg");
+
+                try {
+                    File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "ruufmt_temp.jpg");
+                    f.createNewFile();
+                    FileOutputStream fos = new FileOutputStream(f);
+                    b.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                    context.startActivity(Intent.createChooser(shareIntent, "Share Image"));
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+        });
     }
 
     public void refreshList(ArrayList list) {
@@ -131,9 +179,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.GeneralViewHol
     }
 
     class GeneralViewHolder extends RecyclerView.ViewHolder {
-
+        public LinearLayout shareBody;
+        public Button shareButton;
         public GeneralViewHolder(View itemView) {
             super(itemView);
+            shareButton = (Button) itemView.findViewById(R.id.share_button);
+            shareBody = (LinearLayout) itemView.findViewById(R.id.share_body);
         }
     }
 

@@ -1,9 +1,13 @@
 package com.wesllei.ruufmt;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -13,6 +17,9 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,14 +46,15 @@ public class Communication {
     private final Context context;
     private MainFragment frag;
     private RecyclerView.Adapter adapter;
+    private int afterGetData;
 
     public Communication(Context context) {
         this.context = context;
     }
 
     public void getDataServer(final MainFragment frag, final RecyclerView.Adapter adapter) {
+        this.adapter = adapter;
         this.frag = frag;
-        this.adapter = adapter; 
         new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
@@ -54,6 +62,9 @@ public class Communication {
                 StringBuilder stringBuilder = new StringBuilder();
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpGet httpGet = new HttpGet(url);
+                final HttpParams httpParams = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
+                httpClient = new DefaultHttpClient(httpParams);
                 try {
                     HttpResponse response = httpClient.execute(httpGet);
                     StatusLine statusLine = response.getStatusLine();
@@ -74,25 +85,23 @@ public class Communication {
                     JSONObject json = parse(String.valueOf(stringBuilder));
                     ArrayList list = jsonToDataArray(json);
                     saveData(list);
+                    afterGetData(true);
                 } catch (Exception e) {
+                    afterGetData(false);
                     Log.d("readJSONFeed", e.getLocalizedMessage());
-                    ((Activity) context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            frag.afterRefresh(false);
-                        }
-                    });
-                    return null;
                 }
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        frag.afterRefresh(true);
-                    }
-                });
                 return null;
             }
         }.execute();
+    }
+
+    private void afterGetData(final Boolean success) {
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                frag.afterRefresh(success);
+            }
+        });
     }
 
     private ArrayList jsonToDataArray(JSONObject json) {
@@ -145,7 +154,9 @@ public class Communication {
         }
         return jsonObject;
     }
-
+    public void setAfterGetData(int afterGetData){
+        this.afterGetData = afterGetData;
+    };
     public void saveData(ArrayList list) {
         try {
             FileOutputStream fos = context.openFileOutput(PREFS_NAME, Context.MODE_PRIVATE);
@@ -177,28 +188,6 @@ public class Communication {
     }
 
     public ArrayList processList(ArrayList list, String type) {
-        int i;
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        Calendar itemTime = Calendar.getInstance();
-        ArrayList newList = new ArrayList();
-
-        if (list != null && type != null && type.contentEquals("card")) {
-            for (i = 0; i < list.size(); i++) {
-                if ((list.get(i) instanceof Meal)) {
-                    itemTime.setTime(((Meal) list.get(i)).getDate());
-                    if (itemTime.get(Calendar.DAY_OF_MONTH) >= now.get(Calendar.DAY_OF_MONTH)) {
-                        if ((((Meal) list.get(i)).getType() == 0 || ((Meal) list.get(i)).getType() == 2) && now.get(Calendar.HOUR_OF_DAY) < 14 && now.get(Calendar.MINUTE) < 31) {
-                            newList.add(list.get(i));
-                        } else {
-                            if (((Meal) list.get(i)).getType() == 1 && now.get(Calendar.HOUR_OF_DAY) < 17 && now.get(Calendar.MINUTE) < 1) {
-                                newList.add(list.get(i));
-                            }
-                        }
-                    }
-                }
-            }
-        }
         if (list != null) {
             return list;
         } else {
@@ -240,4 +229,6 @@ public class Communication {
             return false;
         }
     }
+
+
 }

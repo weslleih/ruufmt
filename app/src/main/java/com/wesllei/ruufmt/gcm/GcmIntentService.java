@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.wesllei.ruufmt.Communication;
 import com.wesllei.ruufmt.MainActivity;
 import com.wesllei.ruufmt.R;
 
@@ -34,7 +35,7 @@ public class GcmIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("mealNotification", true)){
+        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("mealNotification", true)) {
             return;
         }
         Bundle extras = intent.getExtras();
@@ -56,8 +57,9 @@ public class GcmIntentService extends IntentService {
             } else if (MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
                 // Post notification of received message.
-                sendNotification(extras.getString("message"));
+                //sendNotification(extras.getString("message"));
                 Log.i(TAG, "Received: " + extras.toString());
+                sendNotification("Cardápio novo dispovível");
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -65,17 +67,16 @@ public class GcmIntentService extends IntentService {
     }
 
     private void sendNotification(String msg) {
-        mNotificationManager = (NotificationManager)
+        NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,0,new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP),Intent.FILL_IN_ACTION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_stat)
-                        .setContentTitle(getResources().getString(R.string.app_name))
+                        .setContentTitle(this.getResources().getString(R.string.app_name))
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
-                        .setColor(getResources().getColor(R.color.primaryColor))
+                        .setColor(this.getResources().getColor(R.color.primaryColor))
                         .setAutoCancel(true)
                         .setContentText(msg);
         mBuilder.setContentIntent(contentIntent);

@@ -3,11 +3,13 @@ package com.wesllei.ruufmt;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -106,6 +109,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     }
 
     @Override
+    public void onNewIntent(Intent intent){
+        viewHome(true);
+    }
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
         savedInstanceState.putSerializable(STATE_CARD_LIST, this.mItems);
@@ -119,6 +126,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         super.onResume();
         // Check device for Play Services APK.
         checkPlayServices();
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "ruufmt_temp.jpg");
+        f.delete();
     }
 
     @Override

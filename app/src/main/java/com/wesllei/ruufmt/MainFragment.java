@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListener;
 
@@ -27,6 +28,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private RecyclerView.Adapter ca;
     private String type;
     private Boolean toRefresh;
+    private MainFragment mainFragment = this;
 
     public void setLit(ArrayList<Object> itemList) {
         if(itemList == null) {
@@ -50,6 +52,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeColors(R.color.primaryColor,R.color.yellow, R.color.backgroundNight);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.mainRecycler);
         recyclerView.setHasFixedSize(true);
@@ -96,13 +99,12 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         recyclerView.addOnItemTouchListener(swipeTouchListener);
         if(toRefresh != null && toRefresh){
-            final MainFragment frag = this;
             swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
                     swipeRefreshLayout.setRefreshing(true);
                     Communication connection = new Communication(context);
-                    connection.getDataServer(frag, ca);
+                    connection.getDataServer(mainFragment, ca);
                 }
             });
         }else{
@@ -111,8 +113,9 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return view;
     }
     @Override public void onRefresh() {
-        Communication connection = new Communication(context);
-        connection.getDataServer(this, ca);
+        Communication communication = new Communication(context);
+        communication.setAfterGetData(1);
+        communication.getDataServer(this, ca);
     }
 
     public void afterRefresh(Boolean bol){
@@ -125,6 +128,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }else{
                 //((EventAdapter) ca).refreshList(list);
             }
+        }else{
+            int duration = Toast.LENGTH_SHORT;
+            CharSequence text = "Falha ao atualizar.";
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
         }
     }
     public void setToRefresh(Boolean toRefresh) {

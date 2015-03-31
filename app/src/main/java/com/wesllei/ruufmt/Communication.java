@@ -110,7 +110,7 @@ public class Communication {
         JSONObject saturday = null;
         JSONObject event = null;
         ArrayList<CardData> list = new ArrayList<CardData>();
-        SharedPreferences sharedPref = ((Activity) context).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.SharePrefs), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date now = new Date();
@@ -154,9 +154,13 @@ public class Communication {
         }
         return jsonObject;
     }
-    public void setAfterGetData(int afterGetData){
+
+    public void setAfterGetData(int afterGetData) {
         this.afterGetData = afterGetData;
-    };
+    }
+
+    ;
+
     public void saveData(ArrayList list) {
         try {
             FileOutputStream fos = context.openFileOutput(PREFS_NAME, Context.MODE_PRIVATE);
@@ -188,6 +192,28 @@ public class Communication {
     }
 
     public ArrayList processList(ArrayList list, String type) {
+        int i;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        Calendar itemTime = Calendar.getInstance();
+        ArrayList newList = new ArrayList();
+
+        /*if (list != null && type != null && type.contentEquals("card")) {
+            for (i = 0; i < list.size(); i++) {
+                if ((list.get(i) instanceof Meal)) {
+                    itemTime.setTime(((Meal) list.get(i)).getDate());
+                    if (itemTime.get(Calendar.DAY_OF_MONTH) >= now.get(Calendar.DAY_OF_MONTH)) {
+                        if ((((Meal) list.get(i)).getType() == 0 || ((Meal) list.get(i)).getType() == 2) && now.get(Calendar.HOUR_OF_DAY) < 14 && now.get(Calendar.MINUTE) < 31) {
+                            newList.add(list.get(i));
+                        } else {
+                            if (((Meal) list.get(i)).getType() == 1 && now.get(Calendar.HOUR_OF_DAY) < 17 && now.get(Calendar.MINUTE) < 1) {
+                                newList.add(list.get(i));
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
         if (list != null) {
             return list;
         } else {

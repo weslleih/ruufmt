@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     private NavigationDrawerFragment navigationDrawerFragment;
     private MainFragment mainFrag;
 
-    ArrayList mItems = new ArrayList();
+    ArrayList mItems = null;
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final String EXTRA_MESSAGE = "message";
@@ -45,6 +45,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
     private GoogleCloudMessaging gcm;
     private String regid;
+
+    private Boolean doRefresh = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,21 +69,22 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 if (regid.isEmpty()) {
                     registerInBackground();
                 }
-
-                if (!isLastListUpdated()) {
-                    this.mItems = new ArrayList();
-                    viewHome(true);
-                } else {
-                    viewHome(false);
-                }
-            } else {
-                this.mItems = (ArrayList) savedInstanceState.getSerializable(STATE_CARD_LIST);
-                viewHome(false);
             }
+            if (!isLastListUpdated()) {
+                doRefresh = true;
+            } else {
+                doRefresh = false;
+            }
+        } else {
+            this.mItems = (ArrayList) savedInstanceState.getSerializable(STATE_CARD_LIST);
+            doRefresh = false;
+
         }
+
+        viewHome();
     }
 
-    public void viewHome(Boolean refresh) {
+    public void viewHome() {
         mainFrag = new MainFragment();
         mainFrag.setLit(this.mItems);
         mainFrag.setType("card");
@@ -89,7 +92,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         transaction.replace(R.id.container, mainFrag);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         transaction.commit();
-        mainFrag.setToRefresh(refresh);
+        mainFrag.setToRefresh(doRefresh);
         if (toolbar != null) {
             toolbar.setTitle(R.string.meal_title);
         }
@@ -109,9 +112,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     }
 
     @Override
-    public void onNewIntent(Intent intent){
-        viewHome(true);
+    public void onNewIntent(Intent intent) {
+        Log.i("NewIntent", intent.toString());
+        doRefresh = true;
+        viewHome();
     }
+
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
@@ -153,8 +159,16 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     }
 
     private Boolean isLastListUpdated() {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.SharePrefs),Context.MODE_PRIVATE);
+        Boolean doUpdate = sharedPref.getBoolean("doUpdate", false);
+        if(doUpdate){
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("doUpdate", false);
+            editor.commit();
+            Log.i("doUpdate",doUpdate.toString());
+            return false;
+        }
 
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         String lastListDate = sharedPref.getString("lastListDate", null);
         if (lastListDate != null) {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -167,17 +181,20 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
             }
+        }else {
+            return false;
         }
-        return false;
+
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        System.out.println(position);
+        doRefresh = false;
         switch (position) {
             case 0:
-                viewHome(false);
+                viewHome();
                 break;
             case 1:
                 viewEvent();

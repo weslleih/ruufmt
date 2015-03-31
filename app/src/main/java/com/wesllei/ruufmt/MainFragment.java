@@ -31,10 +31,11 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private MainFragment mainFragment = this;
 
     public void setLit(ArrayList<Object> itemList) {
-        if(itemList == null) {
-            this.itemList = new ArrayList<>();
-        }else{
+        if(itemList != null) {
             this.itemList = itemList;
+        }else{
+            Communication communication = new Communication(context);
+            this.itemList = communication.getList(type);
         }
     }
 

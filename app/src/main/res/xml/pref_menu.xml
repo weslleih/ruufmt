@@ -1,0 +1,38 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="menu_setting"
+        android:title="Cardápio">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="notify_menu"
+            android:title="@string/notify_menu" />
+        <ListPreference
+            android:defaultValue="1"
+            android:dependency="notify_menu"
+            android:dialogTitle="@string/meal"
+            android:entries="@array/meal_to_notify_list"
+            android:entryValues="@array/meal_to_notify_list_values"
+            android:key="notify_meal"
+            android:summary="@string/meal_to_notify_summary"
+            android:title="@string/meal_to_notify" />
+        <ListPreference
+            android:defaultValue="pp"
+            android:dependency="notify_menu"
+            android:dialogTitle="@string/dish"
+            android:entries="@array/dish_to_notify_list"
+            android:entryValues="@array/dish_to_notify_list_values"
+            android:key="notify_dish"
+            android:summary="@string/dish_to_notify_summary"
+            android:title="@string/dish_to_notify" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="event_setting"
+        android:title="Eventos">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="notify_event"
+            android:title="@string/notify_event" />
+    </PreferenceCategory>
+</PreferenceScreen>

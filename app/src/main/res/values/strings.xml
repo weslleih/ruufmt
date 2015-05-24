@@ -1,22 +1,47 @@
 <resources>
     <string name="app_name">RU UFMT</string>
-    <string name="drawer_open">Menu aberto</string>
-    <string name="drawer_close">Menu fechado</string>
-    <string name="action_settings">Configurações</string>
 
-    <string name="meal_title">Cardápio</string>
-    <string name="event_title">Eventos</string>
+    <string name="font_fontFamily_medium">sans-serif</string>
 
-    <string name="today">Hoje</string>
-    <string name="yesterday">Ontem</string>
+    <string name="server_erro">Erro na conexão com o servidor.</string>
 
-    <string name="pp">Prato principal</string>
-    <string name="ov">Opção vegetariana</string>
-    <string name="sa">Salada</string>
-    <string name="gu">Guarnição</string>
-    <string name="ac">Acompanhamento</string>
-    <string name="so">Sobremesa</string>
-    <string name="su">Suco</string>
-    <string name="send_to">Enviar para</string>
-    <string name="SharePrefs">sharePrefs</string>
+    <string name="ru_long_name">Restaurante Universitário</string>
+    <string name="ufmt_long_name">Universidade Federal de Mato Grosso</string>
+
+    <string name="home">Início</string>
+    <string name="event">Eventos</string>
+    <string name="vnsmes">Vnsmes</string>
+    <string name="about">Sobre</string>
+    <string name="settings">Configurações</string>
+    <string name="app_version">5.0</string>
+    <string name="developer_title">Desenvolvedor</string>
+    <string name="developer_name">Wesllei Henrique do Rosário</string>
+    <string name="licence_title">Licença</string>
+    <string name="license_name">The MIT License (MIT)</string>
+    <string name="mit_licence">
+        Copyright (c) 2015 Wesllei Henrique do Rosário\n\n
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n\n
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \n\n
+        THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+    <string name="source_title">Código-fonte</string>
+    <string name="source_name" >https://github.com/weslleih/ruufmt</string>
+    <string name="close">fechar</string>
+    <string name="third_party_license">Licenças de terceiros</string>
+    <string name="share">Compartilhar</string>
+    <string name="details">Detalhes</string>
+    <string name="separator_trace">   -   </string>
+    <string name="title_activity_event">EventActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="chat">Chat</string>
+    <string name="local_service_connected">Serviço conectado</string>
+    <string name="conection_error">Erro na conexão!</string>
+    <string name="menu">Cardápio</string>
+    <string name="meal">Refeiçao</string>
+    <string name="dish">Prato</string>
+    <string name="notify_event">Notificar novo evento</string>
+    <string name="contact">Contato</string>
+    <string name="email">wesllei.h@gmail.com</string>
+
 </resources>

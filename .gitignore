@@ -1,4 +1,4 @@
-#built application files
+# built application files
 *.apk
 *.ap_
 
@@ -11,22 +11,35 @@
 # generated files
 bin/
 gen/
+out/
+build/
 
 # Local configuration file (sdk path, etc)
 local.properties
-
-# Windows thumbnail db
-Thumbs.db
-
-# OSX files
-.DS_Store
 
 # Eclipse project files
 .classpath
 .project
 
-# Android Studio
+# Windows thumbnail db
+.DS_Store
+
+# IDEA/Android Studio project files, because
+# the project can be imported from settings.gradle
 .idea
-#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+*.iml
+
+# Old-style IDEA project files
+*.ipr
+*.iws
+
+# Local IDEA workspace
+.idea/workspace.xml
+
+# Gradle cache
 .gradle
-build/
+
+# Sandbox stuff
+_sandbox
+
+

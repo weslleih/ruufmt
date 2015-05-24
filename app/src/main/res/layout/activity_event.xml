@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.wesllei.ruufmt.event.EventActivity">
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/event_banner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.wesllei.ruufmt.util.ResizableImageView
+                    android:id="@+id/event_banner_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <ProgressBar
+                    android:id="@+id/event_banner_progess"
+                    style="@android:style/Widget.DeviceDefault.ProgressBar.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="6dp"
+                    android:indeterminate="true"
+                    android:paddingBottom="100dp"
+                    android:paddingTop="100dp"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/share_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/event_banner"
+                android:layout_alignRight="@+id/event_banner"
+                android:layout_marginBottom="-32dp"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_action_social_share"
+                fab:fab_colorNormal="#4CAF50"
+                fab:fab_colorPressed="#A5D6A7"
+                fab:fab_colorRipple="#99FFFFFF"
+                fab:fab_label=""
+                fab:fab_shadowColor="#66000000"
+                fab:fab_shadowRadius="4dp"
+                fab:fab_shadowXOffset="1dp"
+                fab:fab_shadowYOffset="3dp"
+                fab:fab_showShadow="true"
+                fab:fab_size="normal" />
+
+            <LinearLayout
+                android:id="@+id/event_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/event_banner"
+                android:orientation="vertical"
+                android:paddingTop="32dp">
+
+                <TextView
+                    android:id="@+id/event_desc_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="72dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+    <include layout="@layout/toolbar"></include>
+</RelativeLayout>
